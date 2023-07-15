@@ -58,7 +58,22 @@ const createPlace = (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
-const updatePlaceById = (req, res, next) => {};
+const updatePlaceById = (req, res, next) => {
+    const {title, description} = req.body;
+    const placeId = req.params.pid;
+    const updatedPlace = {...DUMMY_PLACES.find( p => p.id === placeId )}; // ... gets a copy of the object
+
+    if (!updatedPlace) {
+        return next(new HttpError("No Place available with this id!", 404));
+    }
+
+    const placeIndex = DUMMY_PLACES.findIndex( p => p.id === placeId );
+    updatedPlace.title = title;
+    updatedPlace.description = description;
+    DUMMY_PLACES[placeIndex] = updatedPlace;
+
+    res.status(200).json({place: updatedPlace});
+};
 
 const deletePlace = (req, res, next) => {};
 
