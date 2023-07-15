@@ -32,11 +32,11 @@ const getPlaceById = (req, res, next) => {
 
 const getPlacesByUserId = (req, res, next) => {
   const userId = req.params.uid;
-  const places = DUMMY_PLACES.find((p) => {
+  const places = DUMMY_PLACES.filter((p) => {
     return userId === p.creator;
   });
 
-  if (!places) {
+  if (!places || places.length === 0) {
     return next(new HttpError("Place not available for the user.", 404));
   }
 
