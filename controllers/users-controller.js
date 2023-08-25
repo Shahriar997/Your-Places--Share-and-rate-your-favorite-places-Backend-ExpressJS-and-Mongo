@@ -9,7 +9,7 @@ const DUMMY_USERS = [
         email: 'shahriar@gmail.com',
         password: 'testers'
     }
-]
+];
 
 const getUsers = (req, res, next) => {
     res.json({users: DUMMY_USERS});
