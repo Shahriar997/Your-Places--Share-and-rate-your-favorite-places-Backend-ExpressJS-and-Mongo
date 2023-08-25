@@ -4,6 +4,8 @@ const { validationResult } = require('express-validator')
 const HttpError = require("../models/http-error");
 const getCoordsForAddress = require("../util/location");
 const Place = require('../models/place');
+const User = require('../models/user');
+const { default: mongoose } = require('mongoose');
 
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid; // { pid: 'p1' }
@@ -61,10 +63,30 @@ const createPlace = async (req, res, next) => {
     location: coordinates,
     image: 'https://cdn.xxl.thumbs.canstockphoto.com/ask-any-questions-hand-holding-question-mark-in-palms-on-dark-background-stock-photography_csp31515501.jpg',
     creator
-  })
+  });
+
+  let user;
 
   try {
-    await createdPlace.save();
+    user = await User.findById(creator);
+  } catch(err) {
+    const error = new HttpError('Creating Places Failed!', 500);
+    return next(err);
+  }
+
+  if (!user) {
+    return next(new HttpError('could not find user', 404));
+  }
+
+  try {
+    // if there is an error between the transactions, all will be rollbacked. 
+    // if no problem all will be commited.
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await createdPlace.save({ session: sess });
+    user.places.push(createdPlace);
+    await user.save();
+    sess.commitTransaction();
   } catch(err) {
     const error = new HttpError('Creating Places Failed!', 500);
     return next(err);

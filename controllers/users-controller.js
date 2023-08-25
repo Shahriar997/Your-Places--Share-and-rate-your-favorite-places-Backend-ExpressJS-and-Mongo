@@ -4,15 +4,6 @@ const { validationResult } = require("express-validator");
 const User = require("../models/user");
 const crypto = require("crypto");
 
-const DUMMY_USERS = [
-  {
-    id: "u1",
-    name: "Shahriar",
-    email: "shahriar@gmail.com",
-    password: "testers",
-  },
-];
-
 const getUsers = async (req, res, next) => {
   let users;
   try {
@@ -51,6 +42,7 @@ const signup = async (req, res, next) => {
     name,
     email,
     password: crypto.createHash("sha256").update(password).digest("hex"),
+    places: [],
   });
 
   let createdUser;
