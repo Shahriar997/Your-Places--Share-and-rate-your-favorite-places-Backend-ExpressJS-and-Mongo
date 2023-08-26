@@ -85,7 +85,7 @@ const createPlace = async (req, res, next) => {
     sess.startTransaction();
     await createdPlace.save({ session: sess });
     user.places.push(createdPlace);
-    await user.save();
+    await user.save({ session: sess });
     sess.commitTransaction();
   } catch(err) {
     const error = new HttpError('Creating Places Failed!', 500);
@@ -127,19 +127,31 @@ const updatePlaceById = async (req, res, next) => {
 const deletePlace = async (req, res, next) => {
   const placeId = req.params.pid;
 
-  let result;
+  let place;
   try {
-    result = await Place.deleteOne({ _id: placeId });
+    // populate will bring the creator object(User)
+    place = await Place.findById(placeId).populate('creator');
   } catch (err) {
     return next(new HttpError("deleting place failed!", 500));
   }
 
-  const message =
-    result.acknowledged && result.deletedCount == 1
-      ? "Place deleted"
-      : "Place does not exist or already deleted!";
+  if (!place) {
+    return next(new HttpError("Place not found!", 404));
+  }
 
-  res.status(200).json({ message: message });
+  try {
+    const sess =  await mongoose.startSession();
+    sess.startTransaction();
+    await Place.deleteOne(place, { session: sess });
+    place.creator.places.pull(place);
+    await place.creator.save({ session: sess });
+    sess.commitTransaction();
+  } catch (err) {
+    return next(new HttpError("deleting place failed!: " + err, 500));
+  }
+
+
+  res.status(200).json({ message: 'Place deleted' });
 };
 
 exports.getPlaceById = getPlaceById;
