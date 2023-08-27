@@ -69,6 +69,10 @@ const login = async (req, res, next) => {
   try {
     identifiedUser = await User.findOne({ email });
   } catch (err) {
+    return next(new HttpError("logging in failed!", 500));
+  }
+
+  if (identifiedUser === null) {
     return next(new HttpError("User not found with the email!", 404));
   }
 
