@@ -28,7 +28,7 @@ app.use((error, req, res, next) => {
         .json({message: error.message || 'An Unknown error Occurred!'});
 });
 
-mongoose.connect('mongodb+srv://shahriar:SoSn4RKilFP6pSsG@myplaces.byzuhgf.mongodb.net/myplaces?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://shahriar:SoSn4RKilFP6pSsG@myplaces.byzuhgf.mongodb.net/mern-myplaces?retryWrites=true&w=majority')
     .then(
         () => {
             console.log('database connected!');
