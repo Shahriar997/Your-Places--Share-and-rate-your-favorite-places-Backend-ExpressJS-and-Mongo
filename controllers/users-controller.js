@@ -42,6 +42,7 @@ const signup = async (req, res, next) => {
     name,
     email,
     password: crypto.createHash("sha256").update(password).digest("hex"),
+    image: 'https://scontent.fdac152-1.fna.fbcdn.net/v/t39.30808-6/318971003_1901192516879013_4335193165971220038_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=09cbfe&_nc_eui2=AeHUf82LwvntaxFDAu3HiDifPpjYuMjEzrM-mNi4yMTOs8TrzkF1Ua841SyNInQoXv4-xrcpgr4A7ld1E1xLe2tf&_nc_ohc=XeQTbOg18i0AX-BuSH7&_nc_ht=scontent.fdac152-1.fna&oh=00_AfDUjGIfq6j77dpTU12hgXmFOgg7axWs_DO3pQPqjJ3D1A&oe=64F0A9D1',
     places: [],
   });
 
