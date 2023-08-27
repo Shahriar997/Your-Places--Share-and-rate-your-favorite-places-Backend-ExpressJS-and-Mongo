@@ -10,6 +10,14 @@ const app = express();
 
 app.use(bodyParser.json());
 
+// headers to go around the CORS error from the browser
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+    next();
+});
+
 //now placesRoutes is just a middleware
 app.use('/api/places' ,placesRoutes); // => /api/places...
 app.use('/api/users' ,usersRoute); // => /api/users...
