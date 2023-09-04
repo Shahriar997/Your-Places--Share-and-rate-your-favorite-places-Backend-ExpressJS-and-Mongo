@@ -84,7 +84,7 @@ const login = async (req, res, next) => {
     return next(new HttpError("Wrong Password!", 401));
   }
 
-  res.json({ message: "logged in!" });
+  res.json({ message: "logged in!", user: identifiedUser.toObject({ getters: true })});
 };
 
 exports.getUsers = getUsers;
