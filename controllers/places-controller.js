@@ -91,7 +91,6 @@ const createPlace = async (req, res, next) => {
     const error = new HttpError('Creating Places Failed!', 500);
     return next(err);
   }
-  
 
   res.status(201).json({ place: createdPlace });
 };
