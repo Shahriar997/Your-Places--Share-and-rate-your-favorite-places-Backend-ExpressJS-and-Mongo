@@ -61,7 +61,7 @@ const createPlace = async (req, res, next) => {
     description,
     address,
     location: coordinates,
-    image: 'https://cdn.xxl.thumbs.canstockphoto.com/ask-any-questions-hand-holding-question-mark-in-palms-on-dark-background-stock-photography_csp31515501.jpg',
+    image: req.file.path,
     creator
   });
 
