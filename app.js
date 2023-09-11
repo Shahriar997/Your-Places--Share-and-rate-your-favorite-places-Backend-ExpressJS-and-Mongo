@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
 const placesRoutes = require('./routes/places-route');
 const HttpError = require('./models/http-error');
@@ -9,6 +11,8 @@ const usersRoute = require('./routes/users-route');
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use('/uploads/images', express.static(path.join(__dirname,'uploads', 'images'))); // static serving means return a file
 
 // headers to go around the CORS error from the browser
 app.use((req, res, next) => {
@@ -28,6 +32,12 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
+    if (req.file) {
+        fs.unlink(req.file.path, () =>{
+            console.log(error);
+        });
+    }
+
     if (res.headerSent) { //if a response has already been sent.
         return next(error); // just pass the error to next middleware
     }
