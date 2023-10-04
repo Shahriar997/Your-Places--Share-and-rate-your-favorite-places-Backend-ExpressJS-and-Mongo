@@ -3,13 +3,20 @@ const { check } = require('express-validator');
 const fileUpload = require('../middleware/file-upload');
 
 const placesController = require('../controllers/places-controller');
+const checkAuth = require('../middleware/check-auth');
 
 const router = express.Router();
 
+// everyone can hit this route
 router.get('/:pid', placesController.getPlaceById);
 
 router.get('/user/:uid', placesController.getPlacesByUserId);
 
+// auth check middleware
+
+router.use(checkAuth);
+
+// protected routes
 router.post(
     '/', 
     fileUpload.single('image'),

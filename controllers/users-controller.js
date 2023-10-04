@@ -3,6 +3,8 @@ const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const User = require("../models/user");
 const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const getUsers = async (req, res, next) => {
   let users;
@@ -38,6 +40,14 @@ const signup = async (req, res, next) => {
     );
   }
 
+  let hashedPassword;
+
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (err) {
+    return next(new HttpError("Could Not Create User. please try again", 500));
+  }
+
   const user = new User({
     name,
     email,
@@ -54,7 +64,22 @@ const signup = async (req, res, next) => {
     return next(new HttpError("Creating user failed!: " + err, 500));
   }
 
-  res.status(201).json({ user: createdUser.toObject({ getters: true }) });
+  let token;
+
+  try {
+    // returns a string;
+    token = jwt.sign(
+      { userId: createdUser.id, email: createdUser.email },
+      "supersecret_dont_share",
+      { expiresIn: "1h" }
+    );
+  } catch (err) {
+    return next(new HttpError("Creating user failed!: " + err, 500));
+  }
+
+  res
+    .status(201)
+    .json({ userId: createdUser.id, email: createdUser.email, token: token });
 };
 
 const login = async (req, res, next) => {
@@ -70,21 +95,46 @@ const login = async (req, res, next) => {
   try {
     identifiedUser = await User.findOne({ email });
   } catch (err) {
-    return next(new HttpError("logging in failed!", 500));
+    return next(new HttpError("login in failed!", 500));
   }
 
   if (identifiedUser === null) {
     return next(new HttpError("User not found with the email!", 404));
   }
 
-  if (
-    identifiedUser.password !==
-    crypto.createHash("sha256").update(password).digest("hex")
-  ) {
+  let isValidPassword;
+
+  try {
+    isValidPassword = await bcrypt.compare(password, identifiedUser.password);
+  } catch (err) {
+    return next(
+      new HttpError("Could not log you in. please check your credentials.", 500)
+    );
+  }
+
+  if (!isValidPassword) {
     return next(new HttpError("Wrong Password!", 401));
   }
 
-  res.json({ message: "logged in!", user: identifiedUser.toObject({ getters: true })});
+  let token;
+
+  try {
+    // returns a string;
+    token = jwt.sign(
+      { userId: identifiedUser.id, email: identifiedUser.email },
+      "supersecret_dont_share",
+      { expiresIn: "1h" }
+    );
+  } catch (err) {
+    return next(new HttpError("User login failed!: " + err, 500));
+  }
+
+  res.json({
+    message: "logged in!",
+    userId: createdUser.id,
+    email: createdUser.email,
+    token: token,
+  });
 };
 
 exports.getUsers = getUsers;

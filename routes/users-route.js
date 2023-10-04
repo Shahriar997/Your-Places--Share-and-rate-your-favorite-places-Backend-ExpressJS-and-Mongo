@@ -5,8 +5,11 @@ const usersController = require('../controllers/users-controller');
 const fileUpload = require('../middleware/file-upload');
 
 const router = express.Router();
+const checkAuth = require("../middleware/check-auth");
 
 router.get('/', usersController.getUsers);
+
+router.use(checkAuth);
 
 router.post(
     '/signup',
