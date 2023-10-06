@@ -9,8 +9,6 @@ const checkAuth = require("../middleware/check-auth");
 
 router.get('/', usersController.getUsers);
 
-router.use(checkAuth);
-
 router.post(
     '/signup',
     fileUpload.single('image'),

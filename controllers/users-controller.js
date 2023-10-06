@@ -2,10 +2,16 @@ const { v4: uuid } = require("uuid");
 const HttpError = require("../models/http-error");
 const { validationResult } = require("express-validator");
 const User = require("../models/user");
-const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+/**
+ * get all users
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 const getUsers = async (req, res, next) => {
   let users;
   try {
@@ -18,6 +24,13 @@ const getUsers = async (req, res, next) => {
   res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
 
+/**
+ * sign up
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 const signup = async (req, res, next) => {
   const errors = validationResult(req);
 
@@ -51,7 +64,7 @@ const signup = async (req, res, next) => {
   const user = new User({
     name,
     email,
-    password: crypto.createHash("sha256").update(password).digest("hex"),
+    password: hashedPassword,
     image: req.file.path,
     places: [],
   });
@@ -82,6 +95,14 @@ const signup = async (req, res, next) => {
     .json({ userId: createdUser.id, email: createdUser.email, token: token });
 };
 
+
+/**
+ * log in
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ * @returns 
+ */
 const login = async (req, res, next) => {
   const errors = validationResult(req);
 
@@ -130,9 +151,8 @@ const login = async (req, res, next) => {
   }
 
   res.json({
-    message: "logged in!",
-    userId: createdUser.id,
-    email: createdUser.email,
+    userId: identifiedUser.id,
+    email: identifiedUser.email,
     token: token,
   });
 };
