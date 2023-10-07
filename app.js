@@ -46,15 +46,14 @@ app.use((error, req, res, next) => {
         .json({message: error.message || 'An Unknown error Occurred!'});
 });
 
-mongoose.connect('mongodb+srv://shahriar:SoSn4RKilFP6pSsG@myplaces.byzuhgf.mongodb.net/mern-myplaces?retryWrites=true&w=majority')
-    .then(
-        () => {
-            console.log('database connected!');
-            app.listen('5000');
-        }
-    )
-    .catch(
-        err => {
-            console.log(err);
-        }
-    );
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@myplaces.byzuhgf.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
+  )
+  .then(() => {
+    console.log("database connected!");
+    app.listen("5000");
+  })
+  .catch((err) => {
+    console.log(err);
+  });
