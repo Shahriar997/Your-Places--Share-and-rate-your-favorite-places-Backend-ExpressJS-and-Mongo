@@ -1,8 +1,0 @@
-{
-    "env": {
-        "DB_USER": "shahriar",
-        "DB_PASSWORD": "SoSn4RKilFP6pSsG",
-        "DB_NAME": "mern-myplaces",
-        "JWT_KEY": "supersecret_dont_share"
-    }
-}
