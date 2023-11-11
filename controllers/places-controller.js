@@ -7,6 +7,15 @@ const User = require('../models/user');
 const { default: mongoose } = require('mongoose');
 const fs = require('fs');
 
+/**
+ * Get a place by id
+ * 
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {Function} next
+ * 
+ * @returns HttpError
+ */
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid; // { pid: 'p1' }
 
@@ -27,6 +36,15 @@ const getPlaceById = async (req, res, next) => {
   res.json({ place: place.toObject({ getters: true }) }); // => {place: place} = {place}
 };
 
+/**
+ * get places by a user id
+ * 
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {Function} next 
+ * 
+ * @returns HttpError
+ */
 const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
   let userWithPlaces;
@@ -46,6 +64,15 @@ const getPlacesByUserId = async (req, res, next) => {
   });
 };
 
+/**
+ * Create a place
+ * 
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {Function} next
+ *  
+ * @returns HttpError 
+ */
 const createPlace = async (req, res, next) => {
   const errors = validationResult(req);
 
@@ -96,6 +123,15 @@ const createPlace = async (req, res, next) => {
   res.status(201).json({ place: createdPlace });
 };
 
+/**
+ * update a place by its id
+ * 
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {Function} next 
+ * 
+ * @returns HttpError
+ */
 const updatePlaceById = async (req, res, next) => {
   const errors = validationResult(req);
 
@@ -128,6 +164,15 @@ const updatePlaceById = async (req, res, next) => {
   res.status(200).json({ place: place.toObject({ getters: true }) });
 };
 
+/**
+ * delete place by id
+ * 
+ * @param {Express.Request} req 
+ * @param {Express.Response} res 
+ * @param {Function} next 
+ * 
+ * @returns HttpError
+ */
 const deletePlace = async (req, res, next) => {
   const placeId = req.params.pid;
 
